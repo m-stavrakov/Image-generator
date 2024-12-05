@@ -1,24 +1,48 @@
-import { ScrollView, StyleSheet, Text, View, Image } from 'react-native'
+import { ScrollView, StyleSheet, Text, View, Image, Alert } from 'react-native'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { images } from '../../constants'
 import FormField from '../../components/FormField'
 import { useState } from 'react'
 import CustomButton from '../../components/CustomButton'
-import { Link } from 'expo-router'
+import { Link, router } from 'expo-router'
+import { getCurrentUser, signIn } from '../../lib/appwrite'
+import { useGlobalContext } from "../../context/GlobalProvider";
 
 const SignIn = () => {
-
+  const { setUser, setIsLogged } = useGlobalContext();
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [form, setForm] = useState({
     email: '',
     password: '',
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const submit = async () => {
+    if(form.email === '' || form.password === '') {
+      Alert.alert('Error', 'All fields are required');
+    }
 
-  const submit = () => {
+    setIsSubmitting(true);
 
-  }
+    try {
+      await signIn(form.email, form.password);
+
+      // set it to global state... (to remember when a user logged in and automatically redirect them to home screen)
+      const result = await getCurrentUser();
+      console.log('====================================');
+      console.log('result:', result);
+      console.log('====================================');
+      setUser(result);
+      setIsLogged(true);
+
+      Alert.alert('Success', 'You have successfully logged in');
+      router.replace('/home');
+    } catch (error) {
+      Alert.alert('Error', error.message);
+    }finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <SafeAreaView className='bg-primary h-full'>

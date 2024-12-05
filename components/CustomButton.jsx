@@ -1,11 +1,14 @@
 import { TouchableOpacity, Text, Platform } from 'react-native'
 import React from 'react'
+import { useHover as webUseHover } from 'react-native-web-hover';
 
 
 let useHover = () => [false, {}]; // Fallback for non-web platforms
 
 if (Platform.OS === 'web') {
-  useHover = require('react-native-web-hover').useHover;
+  // useHover = require('react-native-web-hover').useHover;
+  // const { useHover: webUseHover } = require('react-native-web-hover');
+  useHover = webUseHover;
 }
 
 
