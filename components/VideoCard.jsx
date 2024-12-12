@@ -62,7 +62,7 @@ const VideoCard = ({ video: { title, thumbnail, video, creator: { username, avat
       {isVideoStarted ? (
         <VideoView
             player={player}
-            style={{ width: '100%', height: 240, borderRadius: 33, marginTop: '3%' }}
+            style={{ width: '100%', height: 240, borderRadius: 15, marginTop: '3%' }}
             allowsFullscreen 
             allowsPictureInPicture
             contentFit='cover'

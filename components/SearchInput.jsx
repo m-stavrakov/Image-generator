@@ -1,11 +1,14 @@
-import { Pressable, TextInput, TouchableOpacity, Image } from 'react-native'
+import { Pressable, TextInput, TouchableOpacity, Image, Alert } from 'react-native'
 import React from 'react'
 import { useState } from 'react'
 import { icons } from '../constants'
+import { router, usePathname } from 'expo-router'
 
-const SearchInput = ({ title, value, placeholder, handleChangeText, otherStyles, ...props }) => {
+const SearchInput = ({ initialQuery }) => {
 
-    const [showPassword, setShowPassword] = useState(false);
+    // const [showPassword, setShowPassword] = useState(false);
+    const pathname = usePathname();
+    const [query, setQuery] = useState(initialQuery || '');
     const [isFocused, setIsFocused] = useState(false);
 
   return (
@@ -14,19 +17,26 @@ const SearchInput = ({ title, value, placeholder, handleChangeText, otherStyles,
                 ${isFocused ? 'border-secondary' : 'border-black-200'}`}>
         <TextInput
             className='text-base mt-0.5 text-white font-pregular flex-1'
-            value={value}
+            value={query}
             placeholder='Search for a video topic'
-            placeholderTextColor='#7b7b8b'
-            onChangeText={handleChangeText}
-            // if it is a password it will hide it
-            secureTextEntry={title === 'Password' && !showPassword}
-
+            placeholderTextColor='#CDCDE0'
+            onChangeText={(e) => setQuery(e)}
             onFocus={() => setIsFocused(true)} // Update focus state
             onBlur={() => setIsFocused(false)} // Reset focus state
-            {...props}
         />
 
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            if(!query) {
+              return Alert.alert('Missing query', 'Please input something to search results across database')
+            }
+
+            if(pathname.startsWith('/search')){
+              router.setParams({ query })
+            } else {
+              router.push(`/search/${query}`)
+            }
+          }}>
             <Image
                 source={icons.search}
                 className='w-5 h-5'
