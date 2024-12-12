@@ -17,8 +17,6 @@ const GlobalProvider = ({ children }) => {
                 if(res) {
                     setIsLogged(true);
                     setUser(res);
-                    console.log('res:', res);
-                    console.log('isLogged:', isLogged);
                 }else {
                     setIsLogged(false);
                     setUser(null);

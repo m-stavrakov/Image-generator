@@ -29,9 +29,6 @@ const SignIn = () => {
 
       // set it to global state... (to remember when a user logged in and automatically redirect them to home screen)
       const result = await getCurrentUser();
-      console.log('====================================');
-      console.log('result:', result);
-      console.log('====================================');
       setUser(result);
       setIsLogged(true);
 
