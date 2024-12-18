@@ -1,5 +1,4 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 import { getCurrentUser } from "../lib/appwrite";
 
 const GlobalContext = createContext();

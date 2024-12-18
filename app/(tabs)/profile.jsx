@@ -1,23 +1,27 @@
-import { View, Text, SafeAreaView, FlatList } from 'react-native'
+import { View, SafeAreaView, FlatList, TouchableOpacity, Image } from 'react-native'
 import React from 'react'
-import { useLocalSearchParams } from 'expo-router'
-import { searchPosts } from '../../lib/appwrite'
+import { getUserPosts, signOut } from '../../lib/appwrite'
 import useAppwrite from '../../lib/useAppwrite'
-import { useEffect } from 'react'
-import SearchInput from '../../components/SearchInput'
 import EmptyState from '../../components/EmptyState'
 import VideoCard from '../../components/VideoCard'
+import { useGlobalContext } from '../../context/GlobalProvider'
+import { icons } from '../../constants'
+import InfoBox from '../../components/InfoBox'
+import { router } from 'expo-router'
 
 const Profile = () => {
-  const { query } = useLocalSearchParams();
+  const { user, setUser, setIsLogged } = useGlobalContext();
 
   // data: posts renames data to posts
-  const { data: posts, refetch } = useAppwrite(() => searchPosts(query));
+  const { data: posts, refetch } = useAppwrite(() => getUserPosts(user.$id));
 
-  // will be called every time the query changes
-  useEffect(() => {
-    refetch();
-  }, [query])
+  const logout = async() => {
+    await signOut();
+    setUser(null);
+    setIsLogged(false);
+
+    router.replace('/sign-in');
+  }
 
   return (
     <SafeAreaView className='bg-primary h-full'>
@@ -30,20 +34,41 @@ const Profile = () => {
           <VideoCard video={item} />
         )}
         ListHeaderComponent={() => (
-          <View className='my-6 px-4'>
-
-            <View className='mt-6 mb-8'>
-              <SearchInput initialQuery={query} />
+          <View className='w-full justify-center items-center mt-6 mb-12 px-4'>
+            <TouchableOpacity 
+              className='w-full items-end mb-10'
+              onPress={logout}
+            >
+              <Image
+                source={icons.logout}
+                resizeMode='contain'
+                className='w-6 h-6'
+              />
+            </TouchableOpacity>
+            <View className='w-16 h-16 border border-secondary rounded-lg justify-center items-center'>
+              <Image source={{ uri: user?.avatar }} className='w-[90%] h-[90%] rounded-lg' resizeMode='cover' />
             </View>
 
-            <Text className='font-pmedium text-sm text-gray-100'>
-              Search Results
-            </Text>
+            <InfoBox
+              title={user?.username}
+              containerStyles='mt-5'
+              titleStyes='text-lg'
+            />
 
-            <Text className='text-2xl font-psemibold text-white'>
-              {query}
-            </Text>
+            <View className='mt-5 flex-row'>
+              <InfoBox
+                title={posts.length || 0}
+                subtitle="Posts"
+                containerStyles='mr-10'
+                titleStyes='text-xl'
+              />
 
+              <InfoBox
+                title="1.2K"
+                subtitle="Followers"
+                titleStyes='text-xl'
+              />
+            </View>
           </View>
         )}
         // What will happen if the list is empty

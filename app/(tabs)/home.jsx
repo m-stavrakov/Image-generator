@@ -10,8 +10,12 @@ import { useState } from 'react'
 import { getAllPosts, getLatestPosts } from '../../lib/appwrite'
 import useAppwrite from '../../lib/useAppwrite'
 import VideoCard from '../../components/VideoCard'
+import { useGlobalContext } from '../../context/GlobalProvider'
 
 const Home = () => {
+  // THIS IS HOW TO ACCESS USER PROPERTIES
+  const { user, setUser, setIsLogged } = useGlobalContext();
+
   // data: posts renames data to posts
   const { data: posts, refetch } = useAppwrite(getAllPosts);
   const { data: latestPosts } = useAppwrite(getLatestPosts);
@@ -41,11 +45,11 @@ const Home = () => {
               <View>
 
                 <Text className='font-pmedium text-sm text-gray-100'>
-                  Welcome Back
+                  Welcome Back,
                 </Text>
 
                 <Text className='text-2xl font-psemibold text-white'>
-                  Username
+                  {user?.username}
                 </Text>
 
               </View>
